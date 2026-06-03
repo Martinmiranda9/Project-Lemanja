@@ -31,32 +31,44 @@ Este documento registra los hitos alcanzados, el estado actual de la interfaz y 
   * **Fase 2** (scroll = 100vh): El panel termina de cubrir la imagen. El sticky se suelta instantáneamente y la siguiente sección emerge.
 * **Monograma PF + Frase centrada:** Dentro del panel blureado aparece el círculo con las iniciales **PF** (Polinesia Francesa), el título *"Atrapados por la marea"* y el subtexto *"Una bitácora visual dedicada a los que buscan perderse en la inmensidad del agua."* — todo en **Playfair Display Italic** siguiendo la jerarquía del style-guide.
 * **Navbar Cream Scroll-Driven:** Al completarse el blur, aparece con `fade-in` un navbar fijo en fondo **Cream (#EEE8DF)** con borde inferior sutil. Contiene: `lemanjá.` (izquierda) | líneas decorativas (centro) | reloj de Tahití (derecha) — todo en **Deep Ocean (#2C365A)**.
-* **Sección placeholder:** Se agregó una sección en blanco (`#EEE8DF`) después del hero para recibir el contenido futuro.
-* **Hero `200vh`:** La sección tiene `height: 200vh`. El sticky container es `100vh`. El sticky se suelta en exactamente `100vh` de scroll — el mismo instante en que el panel termina de subir — logrando transición cero-latencia a la siguiente sección.
+* **Hero `200vh`:** La sección tiene `height: 200vh`. El sticky container is `100vh`. El sticky se suelta en exactamente `100vh` de scroll.
+
+### Iteración 4 — Galería Asimétrica (Style-guide de Odd Ritual)
+* **Componente `GallerySection.tsx`:** Implementamos una cuadrícula de tres columnas asimétricas con tres imágenes seleccionadas de mar/estilo de vida polinesio.
+* **Espaciado Editorial:** Amplios márgenes (`py-24 md:py-32`) y líneas divisorias Neo-Brutalistas muy finas para separar las secciones estéticamente.
+* **Esquinas Rectas:** Respetamos estrictamente la regla de esquinas rectas sin bordear (`rounded-none`) y sin sombras difusas.
+
+### Iteración 5 — Frase Cinematográfica (Video Scroll-Driven)
+* **Componente `PhraseCinematic.tsx`:** Creado para actuar de nexo de alto impacto. La sección mide `250vh` de scroll.
+* **Video de Fondo Sticky:** Un video atmosférico de olas gigantes (`video_wave.mp4`) permanece fijo en pantalla mientras el usuario hace scroll.
+* **Transiciones de Texto:** Una frase tipográfica de alto impacto (*"El mar cura todo / libre de memoria / libre de tiempo"*) se desplaza de abajo hacia arriba de forma suave con opacidad progresiva, quedando perfectamente legible sobre el video mediante un filtro oscuro superpuesto.
+
+### Iteración 6 — Galería Horizontal Scroll-Driven (Inspiración en composites.archi)
+* **Componente `HorizontalGallery.tsx`:** Galería que mapea el scroll vertical a un movimiento horizontal de track.
+* **Carga de Imágenes Propias**: Modificado para usar las 10 imágenes reales provistas por el usuario (`/1.jpg` a `/10.jpg`).
+* **Nombres Reales de Destinos**: Asignamos locaciones auténticas de la Polinesia Francesa (como **Matira**, **Temae**, **Teahupo'o**, **Fare**, **Tiputa**, etc.).
+* **Título Centrado y Ajustado**: Centramos horizontalmente el nombre del destino activo sobre el track de fotos. Bajamos el título agregando padding para evitar cualquier solapamiento o corte visual superior.
+* **Diseño Ultra-Limpio (Sin Hover Cliché)**:
+  * Eliminamos por completo el overlay de color oscuro en hover sobre las imágenes.
+  * Quitamos los títulos y subtítulos del hover de las tarjetas.
+  * Mantuvimos únicamente el contador numérico minimalista (ej: `03 / 10`) en tipografía *JetBrains Mono*, apareciendo en la esquina inferior derecha al pasar el ratón.
+  * En mobile, el contador queda siempre visible en la parte inferior de cada tarjeta y el scroll horizontal funciona de forma nativa mediante scroll-snap.
 
 ---
 
 ## 2. Dónde Estamos
-* **Hero Completo:** El componente `Hero.tsx` está íntegro con scroll-driven animations via Lenis + Framer Motion.
-* **Navbar Funcional:** Aparece automáticamente con scroll, en fondo cream con Deep Ocean, sin parpadeos.
-* **Estructura de Página:** `page.tsx` tiene `<Hero />` seguido de una sección placeholder lista para recibir contenido.
-* **Tokens Sincronizados:** Variables de color y tipografía centralizadas en `globals.css`.
-* **Compilación Limpia:** No hay errores TypeScript ni de build. Solo warnings menores de hidratación de Framer Motion (inofensivos).
+* **Secuencia Completa de Landing Page:** `page.tsx` integra exitosamente la siguiente experiencia secuencial:
+  1. `<Hero />` (Scroll-driven panel blur)
+  2. `<GallerySection />` (Asymmetric layout)
+  3. `<PhraseCinematic />` (Ocean video scroll-driven text)
+  4. `<HorizontalGallery />` (Cleaned-up horizontal scroll gallery)
+* **Estética Premium Unificada:** Todos los componentes utilizan exclusivamente la paleta orgánica (Cream, Beige, Deep Ocean), fuentes tipográficas definidas (`Playfair Display Italic` y `JetBrains Mono`), líneas neo-brutalistas delgadas y cero bordes redondeados.
+* **Compilación Verificada:** `npm run build` pasa con éxito sin ningún error de TypeScript.
 
 ---
 
 ## 3. Próximos Pasos (Pendientes)
 
-### UI / Navbar
-* [x] **Quitar "Hora local · PF"** del navbar sticky — se eliminó la etiqueta, queda solo el reloj limpio.
-
-### Nuevas Secciones (Lenis + Framer Motion)
-* [ ] **Sección Galería:** Grid asimétrico de fotos de mar (Polinesia, Tahití). Reveal de imágenes con `overflow-hidden` + `scale 1.15 → 1.0` al hacer scroll. Integrar con Lenis `useScrollOffset`.
-* [ ] **Sección Frase Editorial:** Bloque de texto tipográfico de alto impacto, centrado, con fondo Deep Ocean. Ej: *"El mar no te pide permiso."*
-* [ ] **Sección Filosofía/Sobre:** Layout asimétrico `grid-cols-12`, imagen flotante + texto en dos columnas. Fade-in con Framer Motion al entrar al viewport.
-* [ ] **Footer:** Marca `lemanjá.` centrada, enlaces mínimos, línea decorativa superior, color Deep Ocean sobre Cream.
-
-### Refinamientos Técnicos
-* [ ] Evaluar agregar `ScrollTrigger`-style reveals a las secciones nuevas usando `useInView` de Framer Motion + Lenis.
-* [ ] Revisar performance en mobile (Lenis + `backdrop-filter` pueden ser pesados en dispositivos bajos).
-* [ ] Validar con `npm run build` antes de cerrar cada sección nueva.
+### Footer e Interacciones Finales
+* [ ] **Footer:** Crear un pie de página minimalista que cierre la experiencia con la marca `lemanjá.` centrada y enlaces mínimos.
+* [ ] **Optimización Mobile:** Ajustar rendimiento de los filtros de desenfoque (`backdrop-filter`) en pantallas pequeñas si se detecta lag.
