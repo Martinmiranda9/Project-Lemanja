@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   LEMANJÁ — ORGANIC MARINE GALLERY
+   Design System Tokens (Tailwind v4 @theme)
+───────────────────────────────────────────── */
+@theme inline {
+  /* Paleta Organic Marine */
+  --color-cream:      #EEE8DF;
+  --color-beige:      #C4BCB0;
+  --color-ocean:      #2C365A;
+  --color-ocean-60:   #2C365A99;
+  --color-ocean-20:   #2C365A33;
+
+  /* Semánticos */
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-ocean);
+
+  /* Tipografía */
+  --font-serif:       var(--font-playfair);
+  --font-mono:        var(--font-jetbrains);
+
+  /* Espaciado editorial */
+  --spacing-section:  8rem;    /* py-32 */
+  --spacing-section-md: 12rem; /* md:py-48 */
+}
+
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Lenis requiere scroll en html */
+  scroll-behavior: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #EEE8DF;
+  color: #2C365A;
+  font-family: var(--font-jetbrains), "Space Mono", monospace;
+  min-height: 100vh;
+  /* Sin scroll nativo — Lenis toma el control */
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────
+   TIPOGRAFÍA EDITORIAL
+───────────────────────────────────────────── */
+
+/* Títulos principales: Serif Italic Bold — máximo impacto editorial */
+h1 {
+  font-family: var(--font-playfair), "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 700; /* Bold — con cuerpo, protagonismo total */
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: #2C365A;
+}
+
+/* Subtítulos editoriales: Serif Italic Medium */
+h2 {
+  font-family: var(--font-playfair), "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 600; /* Semi-bold — presencia sin dominar */
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #2C365A;
+}
+
+/* Títulos terciarios / bloques de frase: Serif Italic Regular */
+h3 {
+  font-family: var(--font-playfair), "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400; /* Normal — para frases, citas, bloques líricos */
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #2C365A;
+}
+
+/* Subtítulos / labels: Mono uppercase */
+h4, h5, h6, label, figcaption {
+  font-family: var(--font-jetbrains), monospace;
+  font-style: normal;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #2C365A;
+  opacity: 0.8;
+}
+
+p, li, span, a {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #2C365A;
+}
+
+a {
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+a:hover {
+  opacity: 0.65;
+}
+
+/* ─────────────────────────────────────────────
+   UTILIDADES CUSTOM (Neo-Brutalista)
+───────────────────────────────────────────── */
+
+/* Divisores finos */
+.divider {
+  border-top: 1px solid #2C365A33;
+  width: 100%;
+}
+
+/* Contenedor editorial (respira) */
+.container-editorial {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-editorial {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-editorial {
+    padding-left: 5rem;
+    padding-right: 5rem;
+  }
+}
+
+/* Sección editorial (padding dramático) */
+.section-editorial {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+@media (min-width: 768px) {
+  .section-editorial {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+}
+
+/* Bloque de sección oscura (fondo Ocean) */
+.section-ocean {
+  background-color: #2C365A;
+  color: #EEE8DF;
+}
+
+.section-ocean h1,
+.section-ocean h2,
+.section-ocean h3 {
+  color: #EEE8DF;
+}
+
+.section-ocean p,
+.section-ocean span,
+.section-ocean a {
+  color: #EEE8DF;
+  opacity: 0.85;
+}
+
+/* Bloque de sección beige (transición) */
+.section-beige {
+  background-color: #C4BCB0;
+}
+
+/* Overflow-hidden para reveal de imágenes */
+.img-reveal-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+/* Esquinas completamente rectas */
+button, input, textarea, img, .card {
+  border-radius: 0 !important;
+}
+
+/* Sin sombras difusas — política del style-guide */
+* {
+  box-shadow: none !important;
+}
+
+/* Selección de texto personalizada */
+::selection {
+  background-color: #2C365A;
+  color: #EEE8DF;
+}
