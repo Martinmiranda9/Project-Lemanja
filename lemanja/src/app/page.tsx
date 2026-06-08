@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import GallerySection from "@/components/GallerySection";
 import PhraseCinematic from "@/components/PhraseCinematic";
 import HorizontalGallery from "@/components/HorizontalGallery";
+import EditorialReveal from "@/components/EditorialReveal";
 
 /**
  * page.tsx — Lemanjá
@@ -11,6 +12,7 @@ import HorizontalGallery from "@/components/HorizontalGallery";
  *  <GallerySection />    — Layout asimétrico de 3 imágenes (Odd Ritual style)
  *  <PhraseCinematic />   — 250vh: frase tipográfica scroll-driven sobre video de mar
  *  <HorizontalGallery /> — 400vh: galería horizontal scroll-driven (composites.archi style)
+ *  <EditorialReveal />   — 250vh: imagen editorial + título brutalist word-by-word reveal
  */
 export default function Home() {
   return (
@@ -19,6 +21,7 @@ export default function Home() {
       <GallerySection />
       <PhraseCinematic />
       <HorizontalGallery />
+      <EditorialReveal />
     </main>
   );
 }
