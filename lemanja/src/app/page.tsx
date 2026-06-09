@@ -3,6 +3,7 @@ import GallerySection from "@/components/GallerySection";
 import PhraseCinematic from "@/components/PhraseCinematic";
 import HorizontalGallery from "@/components/HorizontalGallery";
 import EditorialReveal from "@/components/EditorialReveal";
+import SocialsCarousel from "@/components/SocialsCarousel";
 
 /**
  * page.tsx — Lemanjá
@@ -13,6 +14,7 @@ import EditorialReveal from "@/components/EditorialReveal";
  *  <PhraseCinematic />   — 250vh: frase tipográfica scroll-driven sobre video de mar
  *  <HorizontalGallery /> — 400vh: galería horizontal scroll-driven (composites.archi style)
  *  <EditorialReveal />   — 250vh: imagen editorial + título brutalist word-by-word reveal
+ *  <SocialsCarousel />   — 320vh: fan card carousel scroll-driven (Lando Norris style)
  */
 export default function Home() {
   return (
@@ -22,6 +24,7 @@ export default function Home() {
       <PhraseCinematic />
       <HorizontalGallery />
       <EditorialReveal />
+      <SocialsCarousel />
     </main>
   );
 }
