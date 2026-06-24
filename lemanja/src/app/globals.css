@@ -200,6 +200,17 @@ button, input, textarea, img, .card {
   box-shadow: none !important;
 }
 
+/* Fan card carousel — override para permitir border-radius y sombra */
+.fan-card,
+.fan-card img {
+  border-radius: 24px !important;
+}
+
+/* Fan card depth shadow — excepción aprobada al box-shadow: none global */
+.fan-card {
+  box-shadow: 0 8px 32px rgba(44, 54, 90, 0.22) !important;
+}
+
 /* Selección de texto personalizada */
 ::selection {
   background-color: #2C365A;

@@ -4,17 +4,17 @@
  * PhraseCinematic.tsx — Lemanjá
  *
  * Sección tipográfica de impacto post-galería.
- * Replica la técnica exacta de composites.archi:
+ *   Replica la técnica de EditorialReveal (caída desde arriba):
  *
  *   Estructura DOM por palabra:
  *     <span style="overflow:hidden; display:inline-flex">   ← mask
- *       <motion.span style="translateY(100% → 0%)">        ← slide up
+ *       <motion.span style="translateY(-110% → 0%)">       ← fall down
  *         Palabra
  *       </motion.span>
  *     </span>
  *
- *   La palabra empieza desplazada 100% abajo (fuera del mask)
- *   y sube a 0% al scrollear. Cada palabra con stagger.
+ *   La palabra empieza desplazada -110% arriba (fuera del mask)
+ *   y cae a 0% al scrollear. Cada palabra con stagger.
  *
  * Layout de cuadrantes:
  *   ┌──────────────┬──────────────┐
@@ -27,7 +27,7 @@
  *   │              │   libertad." │
  *   └──────────────┴──────────────┘
  *
- * Color: #C4BCB0 (beige) → #EEE8DF (cream) al completarse.
+ * Color: ghost (24% opacidad del color final) → color final al aterrizar.
  *
  * Style-guide compliance:
  *   - Playfair Display Italic Bold (700)
@@ -75,15 +75,16 @@ const TOP_ENTRIES    = buildEntries(PHRASE_TOP, 0);
 const BOTTOM_ENTRIES = buildEntries(PHRASE_BOTTOM, PHRASE_TOP.flat().length);
 const TOTAL_WORDS    = TOP_ENTRIES.length + BOTTOM_ENTRIES.length; // 7
 
-/* Timing del scroll */
-const REVEAL_END  = 0.60;
-const COLOR_START = 0.63;
-const COLOR_END   = 0.85;
+/* Timing del scroll — alineado con EditorialReveal */
+const REVEAL_START = 0.08;
+const REVEAL_END   = 0.50;
+const COLOR_DELAY  = 0.04;
+const COLOR_DUR    = 0.08;
 
 /* ─────────────────────────────────────────────
-   AnimatedWord — Técnica composites.archi
-   overflow:hidden container + translateY(100% → 0%)
-   La palabra sube desde abajo del mask al scrollear.
+   AnimatedWord — Técnica EditorialReveal
+   overflow:hidden container + translateY(-110% → 0%)
+   La palabra cae desde arriba del mask al scrollear.
 ───────────────────────────────────────────── */
 function AnimatedWord({
   word,
@@ -94,22 +95,25 @@ function AnimatedWord({
   globalIndex: number;
   scrollYProgress: MotionValue<number>;
 }) {
-  const segment   = REVEAL_END / TOTAL_WORDS;
-  const startProg = globalIndex * segment * 0.82;
-  const endProg   = Math.min(startProg + segment * 1.25, REVEAL_END);
+  const span    = REVEAL_END - REVEAL_START;
+  const seg     = span / TOTAL_WORDS;
+  const s       = REVEAL_START + globalIndex * seg * 0.8;
+  const e       = Math.min(s + seg * 1.5, REVEAL_END);
 
-  /* translateY: 100% (oculto abajo del mask) → 0% (posición final) */
+  /* translateY: -110% (oculto arriba del mask) → 0% (posición final) */
   const y = useTransform(
     scrollYProgress,
-    [startProg, endProg],
-    ["100%", "0%"]
+    [s, e],
+    ["-110%", "0%"]
   );
 
-  /* Color: beige → cream al completarse */
+  /* Color: ghost (24% opacidad) → color final post-aterrizaje */
+  const cS = e + COLOR_DELAY;
+  const cE = cS + COLOR_DUR;
   const color = useTransform(
     scrollYProgress,
-    [COLOR_START, COLOR_END],
-    ["#C4BCB0", "#EEE8DF"]
+    [s, cS, cE],
+    ["#EEE8DF3d", "#EEE8DF3d", "#EEE8DF"]
   );
 
   return (
@@ -119,7 +123,7 @@ function AnimatedWord({
         display: "inline-flex",
         overflow: "hidden",
         verticalAlign: "top",
-        paddingBottom: "0.1em", /* espacio para descenders (j, g, p, y) */
+        padding: "0.06em 0", /* espacio simétrico para caída desde arriba */
         marginRight: "0.22em",
         /* Override globals.css span rules */
         fontFamily: "inherit",

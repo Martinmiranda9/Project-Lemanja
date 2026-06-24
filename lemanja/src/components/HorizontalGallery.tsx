@@ -318,7 +318,7 @@ export default function HorizontalGallery() {
           <div
             style={{
               padding:
-                "clamp(3rem, 6vh, 5rem) clamp(2rem, 3vw, 3rem) clamp(1.5rem, 2vh, 2rem)",
+                "calc(72px + clamp(1rem, 2vh, 2.5rem)) clamp(2rem, 3vw, 3rem) clamp(1rem, 1.5vh, 2rem)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -327,21 +327,6 @@ export default function HorizontalGallery() {
               flexShrink: 0,
             }}
           >
-            {/* Etiqueta mono */}
-            <span
-              style={{
-                fontFamily:
-                  "var(--font-jetbrains), 'Space Mono', monospace",
-                fontSize: "0.6rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase" as const,
-                color: "#2C365A",
-                opacity: 0.45,
-              }}
-            >
-              Destinos · Polinesia Francesa
-            </span>
-
             {/* Título grande — cambia con el destino centrado */}
             <div style={{ minHeight: "clamp(3rem, 7vw, 5.5rem)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <AnimatePresence mode="wait">
@@ -364,6 +349,7 @@ export default function HorizontalGallery() {
                     lineHeight: 1.15,
                     letterSpacing: "-0.03em",
                     margin: 0,
+                    textAlign: "center",
                   }}
                 >
                   {DESTINATIONS[activeIdx].name}
@@ -430,28 +416,6 @@ export default function HorizontalGallery() {
           paddingBottom: "clamp(3rem, 6vw, 5rem)",
         }}
       >
-        {/* Etiqueta */}
-        <div
-          style={{
-            paddingLeft: "1.5rem",
-            paddingRight: "1.5rem",
-            marginBottom: "1.5rem",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-jetbrains), monospace",
-              fontSize: "0.6rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase" as const,
-              color: "#2C365A",
-              opacity: 0.45,
-            }}
-          >
-            Destinos · Polinesia Francesa
-          </span>
-        </div>
-
         {/* Track scrollable */}
         <div
           className="hz-mobile-track"
