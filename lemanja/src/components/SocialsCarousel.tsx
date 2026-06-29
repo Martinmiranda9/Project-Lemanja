@@ -30,13 +30,13 @@ interface CardData {
 }
 
 const CARDS: CardData[] = [
-  { src: "/1.jpg", alt: "Océano azul — Lemanjá" },
-  { src: "/2.jpg", alt: "Mar en calma — Lemanjá" },
-  { src: "/3.jpg", alt: "Olas al amanecer — Lemanjá" },
-  { src: "/5.jpg", alt: "Espuma de ola — Lemanjá" },
-  { src: "/6.jpg", alt: "Horizonte marino — Lemanjá" },
-  { src: "/7.jpg", alt: "Playa vacía — Lemanjá" },
-  { src: "/8.jpg", alt: "Luz sobre el agua — Lemanjá" },
+  { src: "/11.jpg", alt: "Océano azul — Lemanjá" },
+  { src: "/12.jpg", alt: "Mar en calma — Lemanjá" },
+  { src: "/13.jpg", alt: "Olas al amanecer — Lemanjá" },
+  { src: "/17.jpg", alt: "Espuma de ola — Lemanjá" },
+  { src: "/14.jpg", alt: "Horizonte marino — Lemanjá" },
+  { src: "/15.jpg", alt: "Playa vacía — Lemanjá" },
+  { src: "/16.jpg", alt: "Luz sobre el agua — Lemanjá" },
 ];
 
 /* ── Single animated card ────────────────────── */

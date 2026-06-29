@@ -12,13 +12,8 @@ import Image from "next/image";
 /* ═══════════════════════════════════════════════════════════════
    EditorialReveal.tsx — Lemanjá
 
-   High-impact editorial section: scroll-driven image reveal +
-   brutalist typographic word-by-word animation with color shift.
-   
-   Features font inheritance overrides to bypass global span styles,
-   proper font-weight contrast (Bold vs Regular), and full mobile
-   responsiveness (scroll-driven on desktop, intersection-driven
-   and stacked vertically on mobile).
+   High-impact editorial section: "Scattered to Stacked" cinematic
+   scroll animation + brutalist typography with blur reveal.
    
    Style-guide Compliance:
    - Palette: Deep Ocean (#2C365A) background, Cream (#EEE8DF) and Beige (#C4BCB0) text
@@ -29,20 +24,27 @@ import Image from "next/image";
 /* ── Palette ─────────────────────────────────── */
 const PALETTE = {
   bg:     "#2C365A", // Deep Ocean
-  light:  "#EEE8DF", // Cream (bold text)
-  muted:  "#C4BCB0", // Beige (regular text)
+  light:  "#EEE8DF", // Cream
+  muted:  "#C4BCB0", // Beige
 } as const;
 
 /* ── Scroll Keyframes (progress 0→1) ─────────── */
 const KEYFRAMES = {
-  imageClip:    [0.05, 0.30],
-  imageScale:   [0.00, 0.35],
-  wordReveal:   [0.08, 0.50],
-  colorDelay:   0.04,
-  colorDur:     0.08,
-  description:  [0.26, 0.50], // Starts during title reveal, finishes at the same time
-  decorLine:    [0.02, 0.15],
+  stack:        [0.0, 0.45],  // Images fly in from scattered positions
+  wordReveal:   [0.45, 0.85], // Text reveals after stack
+  colorDelay:   0.03,
+  colorDur:     0.06,
+  description:  [0.75, 0.95],
+  decorLine:    [0.40, 0.50],
 };
+
+const STACK_IMAGES = ["/18.jpg", "/15.jpg", "/12.jpg"];
+
+const SCATTER_STATES = [
+  { x: "12vw", y: "-22vh", rotate: -14, scale: 1.15 }, // Image 0 (Bottom)
+  { x: "35vw", y: "15vh",  rotate: 18,  scale: 0.9  }, // Image 1 (Middle)
+  { x: "18vw", y: "45vh",  rotate: -8,  scale: 1.05 }, // Image 2 (Top)
+];
 
 /* ── Title Config ────────────────────────────── */
 interface WordData {
@@ -89,10 +91,12 @@ function AnimatedWord({
   const s = rS + data.idx * seg * 0.8;
   const e = Math.min(s + seg * 1.5, rE);
 
-  /* Slide down from behind the mask */
+  /* Cinematic Blur & Slide Reveal */
   const y = useTransform(progress, [s, e], ["-110%", "0%"]);
+  const blurVal = useTransform(progress, [s, e], [16, 0]);
+  const filter = useTransform(blurVal, (v) => `blur(${v}px)`);
 
-  /* Color transition within palette: low-opacity (24%) → full final color */
+  /* Color transition within palette */
   const cS = e + KEYFRAMES.colorDelay;
   const cE = cS + KEYFRAMES.colorDur;
   const final = data.bold ? PALETTE.light : PALETTE.muted;
@@ -103,7 +107,7 @@ function AnimatedWord({
     <span
       style={{
         display: "inline-block",
-        overflow: "hidden",
+        overflow: "hidden", // clips the slide-down
         verticalAlign: "top",
         padding: "0.06em 0",
         // Override globals.css span rules
@@ -121,8 +125,9 @@ function AnimatedWord({
           display: "inline-block",
           y,
           color,
+          filter,
           fontWeight: data.bold ? 700 : 400,
-          willChange: "transform, color",
+          willChange: "transform, color, filter",
           // Override globals.css span rules
           fontFamily: "inherit",
           fontSize: "inherit",
@@ -137,6 +142,47 @@ function AnimatedWord({
   );
 }
 
+/* ── StackImage Component ────────────────────── */
+function StackImage({ index, progress, src }: { index: number, progress: MotionValue<number>, src: string }) {
+  const state = SCATTER_STATES[index];
+  
+  // Transform from scattered chaotic state to perfectly stacked (0,0,0,1)
+  const x = useTransform(progress, KEYFRAMES.stack, [state.x, "0vw"]);
+  const y = useTransform(progress, KEYFRAMES.stack, [state.y, "0vh"]);
+  const rotate = useTransform(progress, KEYFRAMES.stack, [state.rotate, 0]);
+  const scale = useTransform(progress, KEYFRAMES.stack, [state.scale, 1]);
+
+  return (
+    <motion.div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        x,
+        y,
+        rotate,
+        scale,
+        willChange: "transform",
+        backgroundColor: PALETTE.muted,
+        border: `4px solid ${PALETTE.light}`, // Polaroid style border
+        boxShadow: "none",
+      }}
+    >
+      <Image
+        src={src}
+        alt={`Océano — Lemanjá ${index + 1}`}
+        fill
+        sizes="(max-width: 768px) 100vw, 30vw"
+        quality={85}
+        priority={index === 0}
+        style={{ objectFit: "cover" }}
+      />
+    </motion.div>
+  );
+}
+
 export default function EditorialReveal() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({
@@ -145,9 +191,6 @@ export default function EditorialReveal() {
   });
 
   /* ── Desktop Motion Mappings ── */
-  const imgScale = useTransform(p, KEYFRAMES.imageScale, [1.15, 1.0]);
-  const imgClipPct = useTransform(p, KEYFRAMES.imageClip, [100, 0]);
-  const imgClip = useTransform(imgClipPct, (v) => `inset(0 ${v}% 0 0)`);
   const descOp = useTransform(p, KEYFRAMES.description, [0, 1]);
   const descY = useTransform(p, KEYFRAMES.description, [25, 0]);
   const lineOp = useTransform(p, KEYFRAMES.decorLine, [0, 0.45]);
@@ -156,13 +199,15 @@ export default function EditorialReveal() {
   const mobileWordVariants = {
     hidden: { 
       y: "-110%",
+      filter: "blur(12px)",
       opacity: 0.24,
     },
     visible: {
       y: "0%",
+      filter: "blur(0px)",
       opacity: 1,
       transition: {
-        duration: 0.8,
+        duration: 0.9,
         ease: [0.16, 1, 0.3, 1] as const,
       },
     },
@@ -190,7 +235,7 @@ export default function EditorialReveal() {
         }}
       />
 
-      {/* ── Sticky viewport (Desktop sticky / Mobile relative) ── */}
+      {/* ── Sticky viewport ── */}
       <div className="editorial-sticky">
         
         {/* ══════════════════════════════════════════════════════════
@@ -198,38 +243,26 @@ export default function EditorialReveal() {
             ══════════════════════════════════════════════════════════ */}
         <div className="editorial-desktop-container" style={{ paddingTop: "6vh" }}>
           
-          {/* Image Column */}
-          <motion.div
+          {/* Image Stack Column */}
+          <div
             style={{
               width: "48%",
               height: "80vh",
               position: "relative",
-              overflow: "hidden",
-              clipPath: imgClip,
               flexShrink: 0,
-              backgroundColor: PALETTE.muted,
+              zIndex: 5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <motion.div
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "relative",
-                scale: imgScale,
-                willChange: "transform",
-              }}
-            >
-              <Image
-                src="/4.jpg"
-                alt="Océano — Lemanjá"
-                fill
-                sizes="50vw"
-                quality={92}
-                priority
-                style={{ objectFit: "cover" }}
-              />
-            </motion.div>
-          </motion.div>
+            {/* Centered Anchor Container for Cards */}
+            <div style={{ position: "relative", width: "60%", aspectRatio: "3/4" }}>
+              {STACK_IMAGES.map((src, index) => (
+                <StackImage key={index} index={index} progress={p} src={src} />
+              ))}
+            </div>
+          </div>
 
           {/* Typography / Content Column */}
           <div
@@ -240,6 +273,7 @@ export default function EditorialReveal() {
               justifyContent: "center",
               paddingLeft: "4%",
               paddingRight: "2%",
+              zIndex: 2, // Texts stay below the scattered images initially
             }}
           >
             {/* Top decorative line */}
@@ -355,46 +389,53 @@ export default function EditorialReveal() {
         </div>
 
         {/* ══════════════════════════════════════════════════════════
-            MOBILE LAYOUT (Stacked, Intersection-driven)
+            MOBILE LAYOUT (Sequential reveal)
             ══════════════════════════════════════════════════════════ */}
         <div className="editorial-mobile-container">
           
           {/* Mobile Image */}
-          <motion.div
-            initial={{ clipPath: "inset(0 100% 0 0)" }}
-            whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          <div
             style={{
               position: "relative",
               width: "100%",
               aspectRatio: "4/5",
-              overflow: "hidden",
-              backgroundColor: PALETTE.muted,
               marginBottom: "2.5rem",
             }}
           >
             <motion.div
-              initial={{ scale: 1.15 }}
-              whileInView={{ scale: 1.0 }}
+              initial={{ clipPath: "inset(0 100% 0 0)", filter: "blur(10px)" }}
+              whileInView={{ clipPath: "inset(0 0% 0 0)", filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-10%" }}
-              transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-              style={{ width: "100%", height: "100%", position: "relative" }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+                backgroundColor: PALETTE.muted,
+              }}
             >
-              <Image
-                src="/4.jpg"
-                alt="Océano — Lemanjá"
-                fill
-                sizes="90vw"
-                quality={85}
-                style={{ objectFit: "cover" }}
-              />
+              <motion.div
+                initial={{ scale: 1.15 }}
+                whileInView={{ scale: 1.0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{ width: "100%", height: "100%", position: "relative" }}
+              >
+                <Image
+                  src={STACK_IMAGES[2]} 
+                  alt="Océano — Lemanjá"
+                  fill
+                  sizes="90vw"
+                  quality={85}
+                  style={{ objectFit: "cover" }}
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </div>
 
           {/* Mobile Text Content */}
           <div>
-            {/* Title with staggered word animation */}
             <motion.h2
               initial="hidden"
               whileInView="visible"
@@ -499,7 +540,8 @@ export default function EditorialReveal() {
       {/* ── Responsive styling block ── */}
       <style>{`
         .editorial-section {
-          height: 280vh;
+          /* Increased height to accommodate the stacking and text reveal */
+          height: 450vh;
         }
         .editorial-sticky {
           position: sticky;
@@ -544,3 +586,4 @@ export default function EditorialReveal() {
     </section>
   );
 }
+
